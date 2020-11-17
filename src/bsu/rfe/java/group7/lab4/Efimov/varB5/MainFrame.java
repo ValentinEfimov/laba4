@@ -54,6 +54,7 @@ public class MainFrame extends JFrame {
             public void actionPerformed(ActionEvent event) {
                 if (fileChooser==null) {
                     fileChooser = new JFileChooser();
+
                     fileChooser.setCurrentDirectory(new File("."));
                 }
                 if (fileChooser.showOpenDialog(MainFrame.this) ==

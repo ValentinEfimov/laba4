@@ -8,6 +8,19 @@ import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Stroke;
 import java.awt.font.FontRenderContext;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
@@ -186,24 +199,21 @@ minY
 // Шаг 1 - Установить специальное перо для черчения контуров маркеров
         canvas.setStroke(markerStroke);
 // Выбрать красный цвета для контуров маркеров
-        canvas.setColor(Color.RED);
+        canvas.setColor(Color.BLACK);
 // Выбрать красный цвет для закрашивания маркеров внутри
-        canvas.setPaint(Color.RED);
+        canvas.setPaint(Color.BLACK);
 // Шаг 2 - Организовать цикл по всем точкам графика
         for (Double[] point : graphicsData) {
-// Инициализировать эллипс как объект для представления маркера
-            Ellipse2D.Double marker = new Ellipse2D.Double();
-/* Эллипс будет задаваться посредством указания координат
-его центра
-и угла прямоугольника, в который он вписан */
-// Центр - в точке (x,y)
-            Point2D.Double center = xyToPoint(point[0], point[1]);
-// Угол прямоугольника - отстоит на расстоянии (3,3)
-            Point2D.Double corner = shiftPoint(center, 3, 3);
-// Задать эллипс по центру и диагонали
-            marker.setFrameFromCenter(center, corner);
-            canvas.draw(marker); // Начертить контур маркера
-            canvas.fill(marker); // Залить внутреннюю область маркера
+// Инициализировать путь из замкнутых линий как объект для представления маркера
+            GeneralPath path = new GeneralPath();
+
+            Point2D.Double point1 = xyToPoint(point[0], point[1]);
+            path.moveTo(point1.getX()-5.5, point1.getY());
+            path.lineTo(point1.getX(), point1.getY()+5.5);
+            path.lineTo(point1.getX()+5.5, point1.getY());
+            path.lineTo(point1.getX(), point1.getY()-5.5);
+            path.closePath();
+            canvas.draw(path);
         }
     }
 
