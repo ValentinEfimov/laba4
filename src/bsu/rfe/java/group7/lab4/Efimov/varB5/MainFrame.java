@@ -28,6 +28,7 @@ public class MainFrame extends JFrame {
     // Пункты меню
     private JCheckBoxMenuItem showAxisMenuItem;
     private JCheckBoxMenuItem showMarkersMenuItem;
+    private JCheckBoxMenuItem showExtremumMenuItem;
     // Компонент-отображатель графика
     private GraphicsDisplay display = new GraphicsDisplay();
     // Флаг, указывающий на загруженность данных графика
@@ -91,6 +92,16 @@ public class MainFrame extends JFrame {
         graphicsMenu.add(showMarkersMenuItem);
 // Элемент по умолчанию включен (отмечен флажком)
         showMarkersMenuItem.setSelected(true);
+        Action showExtremumAction = new AbstractAction("Показывать экстремумы") {
+            public void actionPerformed(ActionEvent event) {
+// по аналогии с showAxisMenuItem
+                display.setShowExtremum(showExtremumMenuItem.isSelected());
+            }
+        };
+        showExtremumMenuItem = new JCheckBoxMenuItem(showExtremumAction);
+        graphicsMenu.add(showExtremumMenuItem);
+// Элемент по умолчанию включен (отмечен флажком)
+        showExtremumMenuItem.setSelected(true);
 // Зарегистрировать обработчик событий, связанных с меню "График"
         graphicsMenu.addMenuListener(new GraphicsMenuListener());
 // Установить GraphicsDisplay в цент граничной компоновки
@@ -155,6 +166,7 @@ Double.SIZE/8 байт;
 // Доступность или недоступность элементов меню "График" определяется загруженностью данных
             showAxisMenuItem.setEnabled(fileLoaded);
             showMarkersMenuItem.setEnabled(fileLoaded);
+            showExtremumMenuItem.setEnabled(fileLoaded);
         }
         // Обработчик, вызываемый после того, как меню исчезло с экрана
         public void menuDeselected(MenuEvent e) {

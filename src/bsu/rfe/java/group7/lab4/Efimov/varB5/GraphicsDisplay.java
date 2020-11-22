@@ -26,6 +26,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.text.DecimalFormat;
 import javax.swing.JPanel;
 public class GraphicsDisplay extends JPanel {
     // Список координат точек для построения графика
@@ -33,6 +34,7 @@ public class GraphicsDisplay extends JPanel {
     // Флаговые переменные, задающие правила отображения графика
     private boolean showAxis = true;
     private boolean showMarkers = true;
+    private boolean showExtremum = true;
     // Границы диапазона пространства, подлежащего отображению
     private double minX;
     private double maxX;
@@ -83,6 +85,10 @@ public class GraphicsDisplay extends JPanel {
 
     public void setShowMarkers(boolean showMarkers) {
         this.showMarkers = showMarkers;
+        repaint();
+    }
+    public void setShowExtremum(boolean showExtremum) {
+        this.showExtremum = showExtremum;
         repaint();
     }
 
@@ -159,6 +165,7 @@ minY
         paintGraphics(canvas);
 // Затем (если нужно) отображаются маркеры точек, по которым строился график.
         if (showMarkers) paintMarkers(canvas);
+        if (showExtremum) printExtremum(canvas);
 // Шаг 9 - Восстановить старые настройки холста
         canvas.setFont(oldFont);
         canvas.setPaint(oldPaint);
@@ -195,7 +202,25 @@ minY
         canvas.draw(graphics);
     }
 
-    // Отображение маркеров точек, по которым рисовался график
+    // Отображение ЭКСТРМУМОВ точек, по которым рисовался график
+    protected void printExtremum(Graphics2D canvas){
+        for(int i = 1; i < graphicsData.length-1; i++){
+            if(graphicsData[i][1]>graphicsData[i-1][1] && graphicsData[i][1]>graphicsData[i+1][1] ||
+                    graphicsData[i][1]<graphicsData[i-1][1] && graphicsData[i][1]<graphicsData[i+1][1]) {
+                Point2D.Double point = xyToPoint(graphicsData[i][0], graphicsData[i][1]);
+                //path.moveTo(point1.getX()-5.5, point1.getY());
+                float x = (float)point.getX()-1;
+                float y = (float)point.getY()-1;
+                DecimalFormat decimalFormat = new DecimalFormat( "#.###" );
+                String str = decimalFormat.format(graphicsData[i][0]);
+                String str2 = decimalFormat.format(graphicsData[i][1]);
+
+
+                canvas.drawString(str+" "+str2,x-5 , y+4);
+            }
+        }
+
+    }
     protected void paintMarkers(Graphics2D canvas) {
 // Шаг 1 - Установить специальное перо для черчения контуров маркеров
         canvas.setStroke(markerStroke);
@@ -215,6 +240,18 @@ minY
             path.lineTo(point1.getX(), point1.getY()-5.5);
             path.closePath();
             canvas.draw(path);
+            // подписи на графике для точек значения функции которых - четные
+            /*Point2D.Double point2 = xyToPoint(point[0], point[1]);
+            float x = (float)point2.getX()-1;
+            float y = (float)point2.getY()-1;
+            DecimalFormat decimalFormat = new DecimalFormat( "#.###" );
+            String str = decimalFormat.format(point[0]);
+            String str2 = decimalFormat.format(point[1]);*/
+            int q = point[1].intValue();
+            if(q%2==0) {
+                canvas.fill(path);
+                //canvas.drawString(str+" "+str2,x-5 , y+4);
+            }
         }
     }
 
